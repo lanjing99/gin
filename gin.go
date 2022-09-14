@@ -3,12 +3,13 @@ package gin
 import (
 	"encoding/json"
 	"encoding/xml"
-	"github.com/julienschmidt/httprouter"
 	"html/template"
 	"log"
 	"math"
 	"net/http"
 	"path"
+
+	"github.com/julienschmidt/httprouter"
 )
 
 const (
@@ -63,7 +64,7 @@ func New() *Engine {
 	engine := &Engine{}
 	engine.RouterGroup = &RouterGroup{nil, "", nil, engine}
 	engine.router = httprouter.New()
-	engine.router.NotFound = engine.handle404
+	engine.router.NotFound = http.HandlerFunc(engine.handle404)
 	return engine
 }
 
@@ -104,7 +105,8 @@ func (engine *Engine) handle404(w http.ResponseWriter, req *http.Request) {
 // of the Router's NotFound handler.
 // To use the operating system's file system implementation,
 // use http.Dir:
-//     router.ServeFiles("/src/*filepath", http.Dir("/var/www"))
+//
+//	router.ServeFiles("/src/*filepath", http.Dir("/var/www"))
 func (engine *Engine) ServeFiles(path string, root http.FileSystem) {
 	engine.router.ServeFiles(path, root)
 }
